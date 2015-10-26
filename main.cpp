@@ -2,7 +2,9 @@
 #include <lua.hpp>
 #include <map>
 #include <cstring>
+
 #include "graphics.h"
+#include "sound.h"
 
 std::map<char, char*> parseArguments(int argc, char* argv[]);
 
@@ -13,9 +15,11 @@ int main(int argc, char* argv[])
 	
 	//bind modules
 	Gfx::bindToLua();
+	Snd::bindToLua();
 	
 	//set up modules
 	Gfx::Graphics *gfxModule = new Gfx::Graphics(args);
+	Snd::Sound *sndModule = new Snd::Sound();
 	
 	//initialize modules
 	if(!gfxModule->init())
@@ -42,6 +46,7 @@ int main(int argc, char* argv[])
 	
 	//clean up
 	delete gfxModule;
+	delete sndModule;
 	
 	return 0;
 }

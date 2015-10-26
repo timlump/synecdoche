@@ -1,11 +1,11 @@
-#include<iostream>
-#include<map>
-#include<stdlib.h>
-#include<string>
+#include <iostream>
+#include <map>
+#include <stdlib.h>
+#include <string>
 
-#include<GL\glew.h>
+#include <GL\glew.h>
 #define GLFW_DLL
-#include<GLFW\glfw3.h>
+#include <GLFW\glfw3.h>
 
 #define DEFAULT_SCREEN_WIDTH 800
 #define DEFAULT_SCREEN_HEIGHT 600
@@ -23,10 +23,10 @@ namespace Gfx
 			void draw();
 			bool update();
 		private:
-			GLFWmonitor *mMonitor;
 			GLFWwindow *mWindow;
 			int mScreenWidth,mScreenHeight;
 			std::string mWindowName;
+			bool mVerboseMode;
 		
 	};
 	

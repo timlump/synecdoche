@@ -23,6 +23,7 @@ Gfx::Graphics::Graphics(std::map<char,char*> args)
 		mScreenHeight = DEFAULT_SCREEN_HEIGHT;
 	}
 	
+	//change window title
 	if((it = args.find('n'))!=args.end())
 	{
 		mWindowName = std::string(it->second);
@@ -41,6 +42,13 @@ bool Gfx::Graphics::init()
 		return false;
 	}
 	
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,2);
+	glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT,GL_TRUE);
+	glfwWindowHint(GLFW_RESIZABLE,GL_FALSE);
+	glfwWindowHint(GLFW_SAMPLES,16);
+	
 	glewExperimental = GL_TRUE;
 	if(!glewInit())
 	{
@@ -49,7 +57,9 @@ bool Gfx::Graphics::init()
 	}
 	
 	mWindow = glfwCreateWindow(mScreenWidth,mScreenHeight,mWindowName.c_str(),NULL,NULL);
+	glfwMakeContextCurrent(mWindow);
 	
+	std::cout << "*Openg GL Version: " << glGetString(GL_VERSION) << std::endl;
 	
 	return true;
 }
