@@ -4,8 +4,6 @@
 #include <cstring>
 #include "graphics.h"
 
-bool running = true;
-
 std::map<char, char*> parseArguments(int argc, char* argv[]);
 
 int main(int argc, char* argv[])
@@ -20,12 +18,26 @@ int main(int argc, char* argv[])
 	Gfx::Graphics *gfxModule = new Gfx::Graphics(args);
 	
 	//initialize modules
-	gfxModule->init();
-	
-	//loop
-	while(running)
+	if(!gfxModule->init())
 	{
+		return -1;
+	}
+	
+	//game loop
+	while(true)
+	{
+		//update modules
+		if(!gfxModule->update())
+		{
+			break;
+		}
 		
+		
+		gfxModule->clear();
+		//
+		//draw calls must be in between these two
+		//
+		gfxModule->draw();
 	}
 	
 	//clean up
