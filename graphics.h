@@ -1,15 +1,20 @@
-#pragma once
 #include <iostream>
-//#include<GL/glew.h>
-//#include<GLFW/glfw3.h>
+#include <map>
+//#include<GL\glew.h>
+#define GLFW_DLL
+#include<GLFW\glfw3.h>
 
 namespace Gfx
 {
 	class Graphics
 	{
 		public:
-			Graphics(int argc, const char* argv[]);
+			Graphics(std::map<char,char*> args);
+			bool init();
+			~Graphics();
 		private:
+			GLFWmonitor *mMonitor;
+			GLFWwindow *mWindow;
 		
 	};
 	
