@@ -5,7 +5,6 @@ Gfx::Graphics::Graphics(std::map<char,char*> args)
 {
 	std::map<char,char*>::iterator it;
 	
-	
 	//get screen size from argss
 	if((it = args.find('x'))!=args.end())
 	{
@@ -58,6 +57,8 @@ bool Gfx::Graphics::init()
 	
 	mWindow = glfwCreateWindow(mScreenWidth,mScreenHeight,mWindowName.c_str(),NULL,NULL);
 	glfwMakeContextCurrent(mWindow);
+	
+	glClearColor(CLEAR_COLOR);
 	
 	std::cout << "*Openg GL Version: " << glGetString(GL_VERSION) << std::endl;
 	

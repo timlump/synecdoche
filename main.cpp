@@ -6,6 +6,8 @@
 #include "graphics.h"
 #include "sound.h"
 
+lua_State *L;
+
 std::map<char, char*> parseArguments(int argc, char* argv[]);
 
 int main(int argc, char* argv[])
@@ -13,13 +15,31 @@ int main(int argc, char* argv[])
 	//parse command line arguments
 	std::map<char,char*> args = parseArguments(argc,argv);
 	
+	//get game lua script if specified in arguments
+	std::map<char,char*>::iterator it;
+	std::string scriptName = "scripts/default.lua";
+	if((it = args.find('s'))!=args.end())
+	{
+		scriptName = std::string(it->second);
+	}
+	
+	//initialize lua
+	L = luaL_newstate();
+	luaL_openlibs(L);
+	
+	if(luaL_loadfile(L,scriptName.c_str()))
+	{
+		std::cout << "Can't load " << scriptName << std::endl;
+		return -1;
+	}
+	
 	//bind modules
-	Gfx::bindToLua();
-	Snd::bindToLua();
+	Gfx::bindToLua(L);
+	Snd::bindToLua(L);
 	
 	//set up modules
 	Gfx::Graphics *gfxModule = new Gfx::Graphics(args);
-	Snd::Sound *sndModule = new Snd::Sound();
+	Snd::Sound *sndModule = new Snd::Sound(args);
 	
 	//initialize modules
 	if(!gfxModule->init())
@@ -30,23 +50,37 @@ int main(int argc, char* argv[])
 	//game loop
 	while(true)
 	{
+		//before script execution
+		gfxModule->clear();
 		//update modules
 		if(!gfxModule->update())
 		{
 			break;
 		}
 		
+		//load & execute script
+		if(luaL_loadfile(L,scriptName.c_str()))
+		{
+			std::cout << "Failed to reload " << scriptName << std::endl;
+			return -1;
+		}
+		if(lua_pcall(L,0,0,0))
+		{
+			std::cout << "Failed to execute " << scriptName << std::endl;
+			std::cout << lua_tostring(L,-1);//print error msg
+			lua_pop(L,1);
+			return -1;
+		}
 		
-		gfxModule->clear();
-		//
-		//draw calls must be in between these two
-		//
+		//after script execution
 		gfxModule->draw();
 	}
 	
 	//clean up
 	delete gfxModule;
 	delete sndModule;
+	
+	lua_close(L);
 	
 	return 0;
 }

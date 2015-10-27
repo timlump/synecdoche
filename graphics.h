@@ -3,12 +3,15 @@
 #include <stdlib.h>
 #include <string>
 
+#include <lua.hpp>
+
 #include <GL\glew.h>
 #define GLFW_DLL
 #include <GLFW\glfw3.h>
 
 #define DEFAULT_SCREEN_WIDTH 800
 #define DEFAULT_SCREEN_HEIGHT 600
+#define CLEAR_COLOR 0.39,0.58,0.92,1.0
 
 namespace Gfx
 {
@@ -30,7 +33,7 @@ namespace Gfx
 		
 	};
 	
-	inline void bindToLua()
+	inline void bindToLua(lua_State *L)
 	{
 		std::cout << "*Binding GFX Module to LUA" << std::endl;
 	}
