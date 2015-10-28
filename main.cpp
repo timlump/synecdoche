@@ -1,5 +1,6 @@
 #include <iostream>
 #include <lua.hpp>
+#include <oolua.h>
 #include <map>
 #include <cstring>
 
@@ -7,6 +8,13 @@
 #include "sound.h"
 
 lua_State *L;
+
+void testLuaFunc()
+{
+	std::cout<<"Lua binding succeeded" << std::endl;
+}
+
+OOLUA_CFUNC(testLuaFunc,l_test)
 
 std::map<char, char*> parseArguments(int argc, char* argv[]);
 
@@ -26,6 +34,8 @@ int main(int argc, char* argv[])
 	//initialize lua
 	L = luaL_newstate();
 	luaL_openlibs(L);
+	
+	OOLUA::set_global(L,"test",l_test);
 	
 	if(luaL_loadfile(L,scriptName.c_str()))
 	{
