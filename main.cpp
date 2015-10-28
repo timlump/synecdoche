@@ -7,6 +7,16 @@
 #include "graphics.h"
 #include "sound.h"
 
+class TestClass
+{
+	
+};
+
+OOLUA_PROXY(TestClass)
+OOLUA_PROXY_END
+
+OOLUA_EXPORT_NO_FUNCTIONS(TestClass)
+
 lua_State *L;
 
 void testLuaFunc()
@@ -35,7 +45,11 @@ int main(int argc, char* argv[])
 	L = luaL_newstate();
 	luaL_openlibs(L);
 	
+	//setup oolua
+	OOLUA::setup_user_lua_state(L);
+	
 	OOLUA::set_global(L,"test",l_test);
+	OOLUA::register_class<TestClass>(L);
 	
 	if(luaL_loadfile(L,scriptName.c_str()))
 	{

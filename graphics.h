@@ -4,6 +4,7 @@
 #include <string>
 
 #include <lua.hpp>
+#include <oolua.h>
 
 #include <GL\glew.h>
 #define GLFW_DLL
