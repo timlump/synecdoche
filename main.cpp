@@ -58,11 +58,11 @@ int main(int argc, char* argv[])
 	}
 	
 	//bind modules
-	Gfx::bindToLua(L);
+	Graphics::bindToLua(L);
 	Snd::bindToLua(L);
 	
 	//set up modules
-	Gfx::Graphics *gfxModule = new Gfx::Graphics(args);
+	Graphics *gfxModule = new Graphics(args);
 	Snd::Sound *sndModule = new Snd::Sound(args);
 	
 	//initialize modules

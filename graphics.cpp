@@ -1,7 +1,7 @@
 #include "graphics.h"
+#include <oolua.h>
 
-
-Gfx::Graphics::Graphics(std::map<char,char*> args)
+Graphics::Graphics(std::map<char,char*> args)
 {
 	std::map<char,char*>::iterator it;
 	
@@ -33,7 +33,7 @@ Gfx::Graphics::Graphics(std::map<char,char*> args)
 	}
 }
 
-bool Gfx::Graphics::init()
+bool Graphics::init()
 {
 	if(!glfwInit())
 	{
@@ -65,22 +65,22 @@ bool Gfx::Graphics::init()
 	return true;
 }
 
-Gfx::Graphics::~Graphics()
+Graphics::~Graphics()
 {
 	glfwTerminate();
 }
 
-void Gfx::Graphics::clear()
+void Graphics::clear()
 {
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 }
 
-void Gfx::Graphics::draw()
+void Graphics::draw()
 {
 	glfwSwapBuffers(mWindow);
 }
 
-bool Gfx::Graphics::update()
+bool Graphics::update()
 {
 	glfwPollEvents();
 	if(glfwWindowShouldClose(mWindow))
@@ -90,4 +90,16 @@ bool Gfx::Graphics::update()
 	}
 	
 	return true;
+}
+
+OOLUA_PROXY(Graphics)
+	OOLUA_TAGS(No_default_constructor)
+OOLUA_PROXY_END
+
+OOLUA_EXPORT_NO_FUNCTIONS(Graphics)
+
+void Graphics::bindToLua(lua_State *L)
+{
+	std::cout << "*Binding Graphics module with LUA" << std::endl;
+	OOLUA::register_class<Graphics>(L);
 }

@@ -4,7 +4,6 @@
 #include <string>
 
 #include <lua.hpp>
-#include <oolua.h>
 
 #include <GL\glew.h>
 #define GLFW_DLL
@@ -14,28 +13,21 @@
 #define DEFAULT_SCREEN_HEIGHT 600
 #define CLEAR_COLOR 0.39,0.58,0.92,1.0
 
-namespace Gfx
+class Graphics
 {
-	class Graphics
-	{
-		public:
-			Graphics(std::map<char,char*> args);
-			bool init();
+	public:
+		Graphics();
+		Graphics(std::map<char,char*> args);
+		bool init();
 			~Graphics();
-			
-			void clear();
-			void draw();
-			bool update();
-		private:
-			GLFWwindow *mWindow;
-			int mScreenWidth,mScreenHeight;
-			std::string mWindowName;
-			bool mVerboseMode;
-		
-	};
 	
-	inline void bindToLua(lua_State *L)
-	{
-		std::cout << "*Binding GFX Module to LUA" << std::endl;
-	}
-}
+		void clear();
+		void draw();
+		bool update();
+			
+		static void bindToLua(lua_State *L);
+	private:
+		GLFWwindow *mWindow;
+		int mScreenWidth,mScreenHeight;
+		std::string mWindowName;
+};
