@@ -3,6 +3,7 @@
 
 Graphics::Graphics(std::map<char,char*> args)
 {
+	
 	std::map<char,char*>::iterator it;
 	
 	//get screen size from argss
@@ -62,6 +63,23 @@ bool Graphics::init()
 	
 	std::cout << "*Openg GL Version: " << glGetString(GL_VERSION) << std::endl;
 	
+	//create fullscreen quad
+	float[] quadVerts = {1.0f, 1.0f, 0.0f,
+						 -1.0f, 1.0f, 0.0f,
+						 1.0f, -1.0f, 0.0f,
+						 -1.0f, -1.0f, 0.0f};
+						 
+	float[] quadUVs = {1.0f, 1.0f,
+					   0.0f, 1.0f,
+					   1.0f, 0.0f,
+					   0.0f, 0.0f};
+					   
+	glGenVertexArrays(1,&mVAO);
+	glBindVertexArray(mVAO);
+	
+	glGenBuffers(1,&mVBO);
+	//to finish - https://github.com/timlump/SpaceRace/blob/init/SpaceRace/SpaceRace/Mesh.cpp
+	
 	return true;
 }
 
@@ -92,14 +110,28 @@ bool Graphics::update()
 	return true;
 }
 
+Graphics* Graphics::getInstance()
+{
+	return mInstance;
+}
+
 OOLUA_PROXY(Graphics)
 	OOLUA_TAGS(No_default_constructor)
+	OOLUA_SFUNC(getInstance)
 OOLUA_PROXY_END
 
 OOLUA_EXPORT_NO_FUNCTIONS(Graphics)
 
-void Graphics::bindToLua(lua_State *L)
+Graphics* Graphics::mInstance = NULL;
+
+void Graphics::bindToLua(lua_State *L,Graphics* ptr)
 {
 	std::cout << "*Binding Graphics module with LUA" << std::endl;
 	OOLUA::register_class<Graphics>(L);
+	OOLUA::register_class_static<Graphics>(L,"getInstance",&OOLUA::Proxy_class<Graphics>::getInstance);
+	
+	if(ptr)
+	{
+		Graphics::mInstance = ptr;
+	}
 }

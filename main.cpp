@@ -7,24 +7,8 @@
 #include "graphics.h"
 #include "sound.h"
 
-class TestClass
-{
-	
-};
-
-OOLUA_PROXY(TestClass)
-OOLUA_PROXY_END
-
-OOLUA_EXPORT_NO_FUNCTIONS(TestClass)
 
 lua_State *L;
-
-void testLuaFunc()
-{
-	std::cout<<"Lua binding succeeded" << std::endl;
-}
-
-OOLUA_CFUNC(testLuaFunc,l_test)
 
 std::map<char, char*> parseArguments(int argc, char* argv[]);
 
@@ -48,22 +32,17 @@ int main(int argc, char* argv[])
 	//setup oolua
 	OOLUA::setup_user_lua_state(L);
 	
-	OOLUA::set_global(L,"test",l_test);
-	OOLUA::register_class<TestClass>(L);
-	
 	if(luaL_loadfile(L,scriptName.c_str()))
 	{
 		std::cout << "Can't load " << scriptName << std::endl;
 		return -1;
 	}
 	
-	//bind modules
-	Graphics::bindToLua(L);
-	Snd::bindToLua(L);
-	
 	//set up modules
 	Graphics *gfxModule = new Graphics(args);
-	Snd::Sound *sndModule = new Snd::Sound(args);
+	gfxModule->bindToLua(L,gfxModule);
+	
+	//Snd::Sound *sndModule = new Snd::Sound(args);
 	
 	//initialize modules
 	if(!gfxModule->init())
@@ -102,7 +81,7 @@ int main(int argc, char* argv[])
 	
 	//clean up
 	delete gfxModule;
-	delete sndModule;
+	//delete sndModule;
 	
 	lua_close(L);
 	

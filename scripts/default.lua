@@ -1,1 +1,1 @@
-test()
+gfxMod = Graphics:getInstance()
