@@ -49,36 +49,44 @@ bool Graphics::init()
 	glfwWindowHint(GLFW_RESIZABLE,GL_FALSE);
 	glfwWindowHint(GLFW_SAMPLES,16);
 	
-	glewExperimental = GL_TRUE;
-	if(!glewInit())
-	{
-		std::cout << "GLEW failed to initialize" << std::endl;
-		return false;
-	}
-	
 	mWindow = glfwCreateWindow(mScreenWidth,mScreenHeight,mWindowName.c_str(),NULL,NULL);
 	glfwMakeContextCurrent(mWindow);
+	
+	glewExperimental = GL_TRUE;
+	GLenum err = glewInit();
+	if(err != GLEW_OK)
+	{
+		std::cout << "GLEW failed to initialize" << std::endl;
+		std::cout << glewGetErrorString(err) << std::endl;
+		return false;
+	}
 	
 	glClearColor(CLEAR_COLOR);
 	
 	std::cout << "*Openg GL Version: " << glGetString(GL_VERSION) << std::endl;
 	
-	//create fullscreen quad
-	float[] quadVerts = {1.0f, 1.0f, 0.0f,
-						 -1.0f, 1.0f, 0.0f,
-						 1.0f, -1.0f, 0.0f,
-						 -1.0f, -1.0f, 0.0f};
-						 
-	float[] quadUVs = {1.0f, 1.0f,
-					   0.0f, 1.0f,
-					   1.0f, 0.0f,
-					   0.0f, 0.0f};
+	//create fullscreen quad - this contains verts and uvs
+	float quadVerts[] = {1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+						 -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+						 1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+						 -1.0f, -1.0f, 0.0f, 0.0f, 0.0f};
 					   
 	glGenVertexArrays(1,&mVAO);
 	glBindVertexArray(mVAO);
 	
 	glGenBuffers(1,&mVBO);
-	//to finish - https://github.com/timlump/SpaceRace/blob/init/SpaceRace/SpaceRace/Mesh.cpp
+	glBindBuffer(GL_ARRAY_BUFFER,mVBO);
+	glBufferData(GL_ARRAY_BUFFER,sizeof(quadVerts),quadVerts,GL_STATIC_DRAW);
+	
+	//pos
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,GL_FLOAT*5,(GLvoid*)0);
+	
+	//uv
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1,2,GL_FLOAT,GL_FALSE,GL_FLOAT*5,(GLvoid*)3);
+	
+	glBindVertexArray(0);
 	
 	return true;
 }
@@ -95,6 +103,8 @@ void Graphics::clear()
 
 void Graphics::draw()
 {
+	glBindVertexArray(mVAO);
+	glDrawArrays(GL_TRIANGLES,0,3);
 	glfwSwapBuffers(mWindow);
 }
 

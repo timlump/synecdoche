@@ -4,7 +4,7 @@
 #include <string>
 
 #include <lua.hpp>
-
+#define GLEW_STATIC
 #include <GL\glew.h>
 #define GLFW_DLL
 #include <GLFW\glfw3.h>
@@ -26,7 +26,7 @@ class Graphics
 		void draw();
 		bool update();
 		
-		GLuint mVAO,VBO;
+		GLuint mVAO,mVBO;
 		static Graphics* getInstance();
 		
 		static Graphics *mInstance;

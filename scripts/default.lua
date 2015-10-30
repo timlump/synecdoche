@@ -1,1 +1,0 @@
-gfxMod = Graphics:getInstance()
