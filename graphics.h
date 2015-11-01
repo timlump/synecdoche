@@ -4,10 +4,7 @@
 #include <string>
 
 #include <lua.hpp>
-#define GLEW_STATIC
-#include <GL\glew.h>
-#define GLFW_DLL
-#include <GLFW\glfw3.h>
+#include "shader.h"
 
 #define DEFAULT_SCREEN_WIDTH 800
 #define DEFAULT_SCREEN_HEIGHT 600
@@ -26,13 +23,19 @@ class Graphics
 		void draw();
 		bool update();
 		
-		GLuint mVAO,mVBO;
+		void setWindowTitle(std::string title);
+		double getTime();
+		
+		GLuint mVAO,mVBO,mEBO;
+		Shader *mShader;
 		static Graphics* getInstance();
 		
 		static Graphics *mInstance;
 		static void bindToLua(lua_State *L,Graphics* ptr = NULL);
+		
 	private:
 		GLFWwindow *mWindow;
 		int mScreenWidth,mScreenHeight;
 		std::string mWindowName;
+		
 };

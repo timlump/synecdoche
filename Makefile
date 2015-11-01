@@ -10,14 +10,14 @@ LIB_FILES = $(GLFW_ROOT)\build\src\glfw3dll.a \
  $(GLEW_ROOT)\build\lib\liblibglewmx_shared.dll.a \
  -lglfw3 -lopengl32 -lglew -lglewmx -lirrKlang -llua -loolua
 
-all: main.o graphics.o sound.o
-	$(CC) main.o graphics.o sound.o -o Synecdoche $(LIBRARIES) $(LIB_FILES)
+all: main.o graphics.o sound.o shader.o
+	$(CC) main.o graphics.o sound.o shader.o -o Synecdoche $(LIBRARIES) $(LIB_FILES)
 	
 main.o: main.cpp
 	$(CC) -c main.cpp $(HEADERS)
 	
-graphics.o: graphics.cpp
-	$(CC) -c graphics.cpp $(HEADERS)
+graphics.o: graphics.cpp shader.cpp
+	$(CC) -c graphics.cpp shader.cpp $(HEADERS)
 	
 sound.o: sound.cpp
 	$(CC) -c sound.cpp $(HEADERS)

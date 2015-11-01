@@ -3,9 +3,12 @@
 #include <oolua.h>
 #include <map>
 #include <cstring>
+#include <sstream>
 
 #include "graphics.h"
 #include "sound.h"
+
+#define FPS_TRACK_DELAY 0.5
 
 
 lua_State *L;
@@ -51,6 +54,9 @@ int main(int argc, char* argv[])
 	}
 	
 	//game loop
+	double lastTime = gfxModule->getTime();
+	double currentTime = lastTime;
+	double timeSinceUpdateFPS = FPS_TRACK_DELAY;
 	while(true)
 	{
 		//before script execution
@@ -77,6 +83,23 @@ int main(int argc, char* argv[])
 		
 		//after script execution
 		gfxModule->draw();
+		
+		//check performances
+		lastTime = currentTime;
+		currentTime = gfxModule->getTime();
+		
+		float deltaTime = currentTime-lastTime;
+		
+		//update fps in window title
+		timeSinceUpdateFPS += deltaTime;
+		if(timeSinceUpdateFPS >= FPS_TRACK_DELAY)
+		{
+			timeSinceUpdateFPS = 0.0;
+			float fps = 1.0f/deltaTime;
+			std::stringstream ss;
+			ss	<< " FPS: " << fps;
+			gfxModule->setWindowTitle(ss.str());
+		}
 	}
 	
 	//clean up
