@@ -10,7 +10,6 @@
 
 #define FPS_TRACK_DELAY 0.5
 
-
 lua_State *L;
 
 std::map<char, char*> parseArguments(int argc, char* argv[]);

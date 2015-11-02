@@ -26,7 +26,8 @@ class Graphics
 		void setWindowTitle(std::string title);
 		double getTime();
 		
-		GLuint mVAO,mVBO,mEBO;
+		GLuint mVAO,mVBO,mEBO,mTBO,mTBTEX;
+		GLint mMaxTBOSize;
 		Shader *mShader;
 		static Graphics* getInstance();
 		

@@ -64,6 +64,8 @@ bool Graphics::init()
 	glClearColor(CLEAR_COLOR);
 	
 	std::cout << "*Openg GL Version: " << glGetString(GL_VERSION) << std::endl;
+	glGetIntegerv(GL_MAX_TEXTURE_BUFFER_SIZE,&mMaxTBOSize);
+	std::cout << "*Max Texture Buffer Size: " << mMaxTBOSize << std::endl;
 	
 	float vertices[] = {
 		 -1.0f,  1.0f, // Top-left
@@ -86,6 +88,16 @@ bool Graphics::init()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,mEBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(elements),elements,GL_STATIC_DRAW);
 	
+	float tboData[] = {1.0f, 0.0f, 0.0f,
+					   0.0f, 1.0f, 0.0f, 
+					   1.0f, 0.0f, 1.0f};
+	
+	glGenBuffers(1,&mTBO);
+	glBindBuffer(GL_TEXTURE_BUFFER,mTBO);
+	glBufferData(GL_TEXTURE_BUFFER,sizeof(tboData),tboData,GL_DYNAMIC_DRAW);
+	glGenTextures(1,&mTBTEX);
+	glBindBuffer(GL_TEXTURE_BUFFER,0);
+	
 	//pos
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0,2,GL_FLOAT,GL_FALSE,0,(GLvoid*)0);
@@ -95,6 +107,13 @@ bool Graphics::init()
 	//setup shader
 	mShader = new Shader("shaders/basic.vert","shaders/raytrace.frag");
 	mShader->bind();
+	
+	//send resolution
+	int width,height;
+	glfwGetFramebufferSize(mWindow,&width,&height);
+	std::cout << "X: " << width << " Y: " << height << std::endl;
+	GLint screenResUni = glGetUniformLocation(mShader->mProgram,"screenRes");
+	glUniform3f(screenResUni,800.0f,600.0f,0.0f);
 	
 	return true;
 }
@@ -113,6 +132,13 @@ void Graphics::clear()
 void Graphics::draw()
 {
 	glBindVertexArray(mVAO);
+	
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_BUFFER,mTBTEX);
+	glTexBuffer(GL_TEXTURE_BUFFER,GL_R32F,mTBO);
+	GLint tboUni = glGetUniformLocation(mShader->mProgram,"tboTex");
+	glUniform1i(tboUni,0);
+	
 	glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
 	glfwSwapBuffers(mWindow);
 }
