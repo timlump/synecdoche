@@ -12,6 +12,9 @@
 
 #define FPS_TRACK_DELAY 0.5
 
+//modules
+Graphics *gfxModule = NULL;
+
 //global variables
 struct Variables
 {
@@ -24,6 +27,9 @@ std::vector<Entity*> ENTITIES;
 
 std::map<char, char*> parseArguments(int argc, char* argv[]);
 void bindToLua();
+
+//callbacks
+void keyCallback(GLFWwindow* win, int key, int scan, int action, int mod);
 
 int main(int argc, char* argv[])
 {
@@ -54,7 +60,7 @@ int main(int argc, char* argv[])
 	}
 	
 	//set up modules
-	Graphics *gfxModule = new Graphics(args);
+	gfxModule = new Graphics(args);
 	gfxModule->bindToLua(L,gfxModule);
 	
 	//Snd::Sound *sndModule = new Snd::Sound(args);
@@ -64,6 +70,9 @@ int main(int argc, char* argv[])
 	{
 		return -1;
 	}
+	
+	//setup input callbacks
+	glfwSetKeyCallback(gfxModule->mWindow,keyCallback);
 	
 	//game loop
 	double lastTime = gfxModule->getTime();
@@ -166,3 +175,12 @@ void bindToLua()
 {
 	
 };
+
+void keyCallback(GLFWwindow* win, int key, int scan, int action, int mod)
+{
+	//quit
+	if(key == GLFW_KEY_ESCAPE)
+	{
+		gfxModule->shutdown();
+	}
+}

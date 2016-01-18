@@ -16,6 +16,7 @@ class Graphics
 		Graphics();
 		Graphics(std::map<char,char*> args);
 		bool init();
+		void shutdown();
 		~Graphics();
 		
 		GLuint getCurrentShader();
@@ -28,13 +29,6 @@ class Graphics
 		
 		void setWindowTitle(std::string title);
 		double getTime();
-
-		//input callbacks
-		void *mMouseButtonCallback;
-		void *mCursorCallback;
-		void *mScrollCallback;
-		void *mKeyCallback;
-		void *mCharCallback;
 		
 		Shader *mShader;
 		static Graphics* getInstance();
@@ -42,10 +36,9 @@ class Graphics
 		static Graphics *mInstance;
 		static void bindToLua(lua_State *L,Graphics* ptr = NULL);
 		
-	private:
 		GLFWwindow *mWindow;
+	private:
 		int mScreenWidth,mScreenHeight;
 		GLuint mCurrentShader;
 		std::string mWindowName;
-		
 };
