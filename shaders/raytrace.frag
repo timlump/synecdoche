@@ -2,12 +2,12 @@
 //http://www.clockworkcoders.com/oglsl/rt/gpurt1.htm
 //http://www.scratchapixel.com/code.php?id=9&origin=/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle
 //https://www.shadertoy.com/view/4ljGRd
-//http://www.scratchapixel.com/code.php?id=9&origin=/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle
 
 #version 150
 
 uniform vec3 screenRes;
 uniform samplerBuffer tboTex;
+uniform vec3 rayOrigin = vec3(0.0);
 
 out vec4 outColor;
 
@@ -38,7 +38,7 @@ void main()
 	vec3 dir = normalize(vec3(uv.x,uv.y,-1));
 	
 	Ray ray;
-	ray.origin = orig;
+	ray.origin = rayOrigin;
 	ray.dir = dir;
 	
 	float r = texelFetch(tboTex,0).r;

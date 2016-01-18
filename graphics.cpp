@@ -64,49 +64,11 @@ bool Graphics::init()
 	glClearColor(CLEAR_COLOR);
 	
 	std::cout << "*Openg GL Version: " << glGetString(GL_VERSION) << std::endl;
-	glGetIntegerv(GL_MAX_TEXTURE_BUFFER_SIZE,&mMaxTBOSize);
-	std::cout << "*Max Texture Buffer Size: " << mMaxTBOSize << std::endl;
-	
-	float vertices[] = {
-		 -1.0f,  1.0f, // Top-left
-		 1.0f,  1.0f,  // Top-right
-		 1.0f, -1.0f,  // Bottom-right
-		 -1.0f, -1.0f  // Bottom-left
-	};
-	
-	GLuint elements[] = {0,1,2,
-						 2,3,0};
-					   
-	glGenVertexArrays(1,&mVAO);
-	glBindVertexArray(mVAO);
-	
-	glGenBuffers(1,&mVBO);
-	glBindBuffer(GL_ARRAY_BUFFER,mVBO);
-	glBufferData(GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW);
-	
-	glGenBuffers(1,&mEBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,mEBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(elements),elements,GL_STATIC_DRAW);
-	
-	float tboData[] = {1.0f, 0.0f, 0.0f,
-					   0.0f, 1.0f, 0.0f, 
-					   1.0f, 0.0f, 1.0f};
-	
-	glGenBuffers(1,&mTBO);
-	glBindBuffer(GL_TEXTURE_BUFFER,mTBO);
-	glBufferData(GL_TEXTURE_BUFFER,sizeof(tboData),tboData,GL_DYNAMIC_DRAW);
-	glGenTextures(1,&mTBTEX);
-	glBindBuffer(GL_TEXTURE_BUFFER,0);
-	
-	//pos
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0,2,GL_FLOAT,GL_FALSE,0,(GLvoid*)0);
-	
-	glBindVertexArray(0);
 	
 	//setup shader
-	mShader = new Shader("shaders/basic.vert","shaders/raytrace.frag");
+	mShader = new Shader("shaders/basic.vert","shaders/basic.frag");
 	mShader->bind();
+	mCurrentShader = mShader->mProgram;
 	
 	//send resolution
 	int width,height;
@@ -131,15 +93,11 @@ void Graphics::clear()
 
 void Graphics::draw()
 {
-	glBindVertexArray(mVAO);
 	
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_BUFFER,mTBTEX);
-	glTexBuffer(GL_TEXTURE_BUFFER,GL_R32F,mTBO);
-	GLint tboUni = glGetUniformLocation(mShader->mProgram,"tboTex");
-	glUniform1i(tboUni,0);
-	
-	glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
+}
+
+void Graphics::swap()
+{
 	glfwSwapBuffers(mWindow);
 }
 
@@ -163,6 +121,16 @@ void Graphics::setWindowTitle(std::string title)
 double Graphics::getTime()
 {
 	return glfwGetTime();
+}
+
+GLuint Graphics::getCurrentShader()
+{
+	return mCurrentShader;
+}
+
+void Graphics::setCurrentShader(GLuint shaderID)
+{
+	mCurrentShader = shaderID;
 }
 
 Graphics* Graphics::getInstance()

@@ -2,17 +2,28 @@
 #include <lua.hpp>
 #include <oolua.h>
 #include <map>
+#include <vector>
 #include <cstring>
 #include <sstream>
 
 #include "graphics.h"
 #include "sound.h"
+#include "entity.h"
 
 #define FPS_TRACK_DELAY 0.5
 
+//global variables
+struct Variables
+{
+	bool isSetupPhase;
+} GVar;
+
 lua_State *L;
 
+std::vector<Entity*> ENTITIES;
+
 std::map<char, char*> parseArguments(int argc, char* argv[]);
+void bindToLua();
 
 int main(int argc, char* argv[])
 {
@@ -33,6 +44,8 @@ int main(int argc, char* argv[])
 	
 	//setup oolua
 	OOLUA::setup_user_lua_state(L);
+	
+	bindToLua();
 	
 	if(luaL_loadfile(L,scriptName.c_str()))
 	{
@@ -56,6 +69,11 @@ int main(int argc, char* argv[])
 	double lastTime = gfxModule->getTime();
 	double currentTime = lastTime;
 	double timeSinceUpdateFPS = FPS_TRACK_DELAY;
+	
+	//in case we want to run some setup code in the lua script
+	GVar.isSetupPhase = true;
+	OOLUA::set_global(L,"isSetupPhase",GVar.isSetupPhase);
+	
 	while(true)
 	{
 		//before script execution
@@ -80,8 +98,16 @@ int main(int argc, char* argv[])
 			return -1;
 		}
 		
+		//so that we don't repeat any setup code
+		if(GVar.isSetupPhase)
+		{
+			GVar.isSetupPhase = false;
+			OOLUA::set_global(L,"isSetupPhase",GVar.isSetupPhase);
+		}
+		
 		//after script execution
 		gfxModule->draw();
+		gfxModule->swap();
 		
 		//check performances
 		lastTime = currentTime;
@@ -102,6 +128,12 @@ int main(int argc, char* argv[])
 	}
 	
 	//clean up
+	for(std::vector<Entity*>::iterator it = ENTITIES.begin() ; it != ENTITIES.end() ; it++)
+	{
+		delete *it;
+	}
+	ENTITIES.clear();
+	
 	delete gfxModule;
 	//delete sndModule;
 	
@@ -119,7 +151,7 @@ std::map<char, char*> parseArguments(int argc, char* argv[])
 	{
 		if(argv[i][0] == '-' && strlen(argv[i]) == 2)
 		{
-			i++;//skip ahead once index to get the argument value
+			i++;//skip ahead one index to get the argument value
 			if(i < argc)
 			{
 				result[argv[i-1][1]] = argv[i];
@@ -129,3 +161,8 @@ std::map<char, char*> parseArguments(int argc, char* argv[])
 	
 	return std::map<char,char*>(result);
 }
+
+void bindToLua()
+{
+	
+};

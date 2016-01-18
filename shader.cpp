@@ -52,7 +52,7 @@ GLuint Shader::createVertexShader(std::string vertShader)
 			std::cout << buffer << std::endl;
 		}
 
-		return 0;//sdr;
+		return sdr;
 	}
 }
 
