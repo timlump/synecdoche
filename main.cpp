@@ -53,11 +53,11 @@ int main(int argc, char* argv[])
 	
 	bindToLua();
 	
-	if(luaL_loadfile(L,scriptName.c_str()))
+	/*if(luaL_loadfile(L,scriptName.c_str()))
 	{
 		std::cout << "Can't load " << scriptName << std::endl;
 		return -1;
-	}
+	}*/
 	
 	//set up modules
 	gfxModule = new Graphics(args);
@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
 		//load & execute script
 		if(luaL_loadfile(L,scriptName.c_str()))
 		{
-			std::cout << "Failed to reload " << scriptName << std::endl;
+			std::cout << "Failed to load " << scriptName << std::endl;
 			return -1;
 		}
 		if(lua_pcall(L,0,0,0))
