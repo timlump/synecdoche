@@ -26,7 +26,7 @@ lua_State *L;
 std::vector<Entity*> ENTITIES;
 
 std::map<char, char*> parseArguments(int argc, char* argv[]);
-void bindToLua();
+void bindToLua(lua_State *lState);
 
 //callbacks
 void keyCallback(GLFWwindow* win, int key, int scan, int action, int mod);
@@ -51,17 +51,8 @@ int main(int argc, char* argv[])
 	//setup oolua
 	OOLUA::setup_user_lua_state(L);
 	
-	bindToLua();
-	
-	if(luaL_loadfile(L,scriptName.c_str()))
-	{
-		std::cout << "Can't load " << scriptName << std::endl;
-		return -1;
-	}
-	
 	//set up modules
 	gfxModule = new Graphics(args);
-	gfxModule->bindToLua(L,gfxModule);
 	
 	//Snd::Sound *sndModule = new Snd::Sound(args);
 	
@@ -70,6 +61,9 @@ int main(int argc, char* argv[])
 	{
 		return -1;
 	}
+	
+	//bind code to lua
+	bindToLua(L);
 	
 	//setup input callbacks
 	glfwSetKeyCallback(gfxModule->mWindow,keyCallback);
@@ -96,7 +90,7 @@ int main(int argc, char* argv[])
 		//load & execute script
 		if(luaL_loadfile(L,scriptName.c_str()))
 		{
-			std::cout << "Failed to reload " << scriptName << std::endl;
+			std::cout << "Failed to load " << scriptName << std::endl;
 			return -1;
 		}
 		if(lua_pcall(L,0,0,0))
@@ -171,9 +165,10 @@ std::map<char, char*> parseArguments(int argc, char* argv[])
 	return std::map<char,char*>(result);
 }
 
-void bindToLua()
+void bindToLua(lua_State *lState)
 {
-	
+	Entity::bindToLua(lState);
+	Graphics::bindToLua(lState,gfxModule);
 };
 
 void keyCallback(GLFWwindow* win, int key, int scan, int action, int mod)
